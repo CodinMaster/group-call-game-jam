@@ -2,6 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
+import Iframe from "react-iframe";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import AppBar from "@material-ui/core/AppBar";
+import Grid from "@material-ui/core/Grid";
 import ChatBox from "../components/ChatBox";
 
 const Container = styled.div`
@@ -14,8 +19,7 @@ const Container = styled.div`
 `;
 
 const StyledVideo = styled.video`
-  height: 40%;
-  width: 50%;
+  height: inherit;
 `;
 
 const Video = (props) => {
@@ -27,12 +31,21 @@ const Video = (props) => {
     });
   }, []);
 
-  return <StyledVideo playsInline autoPlay ref={ref} />;
+  return (
+    <StyledVideo
+      style={{ minHeight: "180px" }}
+      playsInline
+      autoPlay
+      ref={ref}
+    />
+  );
 };
 
 const videoConstraints = {
-  height: window.innerHeight / 2,
-  width: window.innerWidth / 2,
+  // height: window.innerHeight / 2,
+  // width: window.innerWidth / 2,
+  height: "250px",
+  width: "262.5px",
 };
 
 const Room = (props) => {
@@ -97,7 +110,6 @@ const Room = (props) => {
   }, [usernameTrue]);
 
   function sendMessage(e) {
-    e.preventDefault();
     const messageObject = {
       body: message,
       id: yourID,
@@ -143,32 +155,139 @@ const Room = (props) => {
 
   return (
     <Container>
-      <div>Apoorv's Chat App</div>
       {usernameTrue ? (
         <>
-          <StyledVideo muted ref={userVideo} autoPlay playsInline />
-          {peers.map((peer, index) => {
-            return <Video key={index} peer={peer} />;
-          })}
-          <ChatBox
-            yourID={yourID}
-            messages={messages}
-            message={message}
-            setMessage={setMessage}
-            sendMessage={sendMessage}
-          />
+          <AppBar
+            position="static"
+            color="default"
+            style={{
+              height: "175px",
+            }}
+          >
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid
+                item
+                xs={3}
+                style={{
+                  maxWidth: "50%",
+                  margin: "auto",
+                  paddingBottom: "20px",
+                }}
+              >
+                <StyledVideo muted ref={userVideo} autoPlay playsInline />
+              </Grid>
+              {peers.map((peer, index) => {
+                return (
+                  <Grid
+                    item
+                    xs={3}
+                    style={{
+                      maxWidth: "50%",
+                      margin: "auto",
+                      paddingBottom: "20px",
+                    }}
+                  >
+                    <Video key={index} peer={peer} />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </AppBar>
+          <Grid
+            container
+            direction="coloumn"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid
+              item
+              xs={10}
+              style={{
+                maxWidth: "70%",
+                paddingRight: "10px",
+                marginTop: "-200px",
+              }}
+            >
+              <Iframe
+                url="https://splix.io/"
+                height="500px"
+                width="100%"
+                display="initial"
+                position="relative"
+              />
+            </Grid>
+            <Grid
+              item
+              xs={2}
+              style={{
+                maxWidth: "50%",
+                paddingBottom: "20px",
+              }}
+            >
+              <ChatBox
+                yourID={yourID}
+                messages={messages}
+                message={message}
+                setMessage={setMessage}
+                sendMessage={sendMessage}
+              />
+            </Grid>
+          </Grid>
         </>
       ) : (
         <>
-          <input
-            type="text"
-            placeholder="Enter Display Name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+          <img
+            src="/dot-grid-triangle.svg"
+            alt="dots"
+            style={{
+              left: 0,
+              top: "40px",
+              position: "fixed",
+              height: "250px",
+              zIndex: 99,
+            }}
           />
-          <button type="submit" onClick={() => setUsernameTrue(true)}>
-            Submit
-          </button>
+          <div
+            style={{
+              marginTop: "250px",
+              marginLeft: "550px",
+              minHeight: "36px",
+            }}
+          >
+            <TextField
+              type="text"
+              label="Display Name"
+              placeholder="Enter Display Name"
+              variant="outlined"
+              style={{
+                minWidth: "240px",
+              }}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setUsernameTrue(true);
+                }
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{
+                minHeight: "55px",
+                marginLeft: "20px",
+              }}
+              onClick={() => setUsernameTrue(true)}
+            >
+              Submit
+            </Button>
+          </div>
         </>
       )}
     </Container>

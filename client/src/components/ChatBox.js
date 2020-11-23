@@ -6,7 +6,6 @@ const Page = styled.div`
   height: 100vh;
   width: 100%;
   align-items: center;
-  background-color: #46516e;
   flex-direction: column;
 `;
 
@@ -14,27 +13,29 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 500px;
-  max-height: 500px;
+  max-height: 300px;
   overflow: auto;
   width: 400px;
-  border: 1px solid lightgray;
+  border: 1px solid black;
   border-radius: 10px;
   padding-bottom: 10px;
   margin-top: 25px;
 `;
 
-const TextArea = styled.textarea`
+const TextArea = styled.input`
   width: 98%;
   height: 100px;
+  max-height: 50px;
   border-radius: 10px;
   margin-top: 10px;
+  margin-bottom: 10px;
   padding-left: 10px;
   padding-top: 10px;
   font-size: 17px;
   background-color: transparent;
   border: 1px solid lightgray;
   outline: none;
-  color: lightgray;
+  color: black;
   letter-spacing: 1px;
   line-height: 20px;
   ::placeholder {
@@ -43,17 +44,14 @@ const TextArea = styled.textarea`
 `;
 
 const Button = styled.button`
-  background-color: pink;
+  background-color: #303f9f;
   width: 100%;
   border: none;
   height: 50px;
   border-radius: 10px;
-  color: #46516e;
+  color: white;
   font-size: 17px;
-`;
-
-const Form = styled.form`
-  width: 400px;
+  cursor: pointer;
 `;
 
 const MyRow = styled.div`
@@ -81,7 +79,7 @@ const PartnerRow = styled(MyRow)`
 const PartnerMessage = styled.div`
   width: 45%;
   background-color: transparent;
-  color: lightgray;
+  color: black;
   border: 1px solid lightgray;
   padding: 10px;
   margin-left: 5px;
@@ -104,21 +102,26 @@ const ChatBox = ({ yourID, messages, message, setMessage, sendMessage }) => {
           }
           return (
             <PartnerRow key={index}>
-              <b>{message.username}</b>
-              <br />
-              <PartnerMessage>{message.body}</PartnerMessage>
+              <PartnerMessage>
+                <b>{message.username}:</b>
+                <br />
+                {message.body}
+              </PartnerMessage>
             </PartnerRow>
           );
         })}
       </Container>
-      <Form onSubmit={sendMessage}>
-        <TextArea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Say something..."
-        />
-        <Button>Send</Button>
-      </Form>
+      <TextArea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Say something..."
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        }}
+      />
+      <Button onClick={() => sendMessage()}>Send</Button>
     </Page>
   );
 };
